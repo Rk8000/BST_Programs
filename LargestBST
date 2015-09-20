@@ -1,0 +1,145 @@
+/**
+ * The Node class creates node of the tree
+ *
+ * @author  Ravi Kumar Singh
+ * @version 1.0
+ * @since   2015-04-06
+ */
+
+class Node{
+
+    int data;
+    Node left;
+    Node right;
+
+    public int getData() {
+        return data;
+    }
+
+    public void setData(int data) {
+        this.data = data;
+    }
+
+    public Node getLeft() {
+        return left;
+    }
+
+    public void setLeft(Node left) {
+        this.left = left;
+    }
+
+    public Node getRight() {
+        return right;
+    }
+
+    public void setRight(Node right) {
+        this.right = right;
+    }
+
+    public Node(int data, Node left, Node right) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
+}
+
+/**
+ * The BST class is to create the Binary search tree
+ *
+ * @author  Ravi Kumar Singh
+ * @version 1.0
+ * @since   2015-04-06
+ */
+
+public class LargestBST {
+    Node root;
+
+    /**
+     * insertNode to insert the Node to tree
+     * @param key
+     * @return void
+     */
+    public void insertNode(int key) {
+        root = insertNode(root, new Node(key, null, null));
+    }
+
+    /**
+     * insertNode to insert the Node to tree
+     * @param currentParent, newNode
+     * @return Node
+     */
+    public Node insertNode(Node currentParent, Node newNode) {
+
+        if (currentParent == null) {
+            return newNode;
+        } else if (newNode.getData() > currentParent.getData()) {
+            currentParent.right = insertNode(currentParent.right, newNode);
+        } else if (newNode.getData() < currentParent.getData()) {
+            currentParent.left = insertNode(currentParent.left, newNode);
+        }
+        return currentParent;
+    }
+
+    /**
+     * inOrderTraversal to for inOrderTraversal for Tree
+     * @param root
+     * @return void
+     */
+    public void inOrderTraversal(Node root){
+        if( root == null){
+            return;
+        }
+        inOrderTraversal(root.getLeft());
+        System.out.println(root.getData());
+        inOrderTraversal(root.getRight());
+    }
+
+    public int sizeOfTree(Node root){
+        if( root == null ){
+            return 0;
+        }
+        return sizeOfTree(root.getLeft()) + 1 + sizeOfTree(root.getRight());
+    }
+
+    public boolean isBST(){
+        if(isBST( root, Integer.MIN_VALUE, Integer.MAX_VALUE)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isBST(Node root, int minValue, int maxValue) {
+        if( root ==null){
+            return true;
+        }
+        if( root.getData() < minValue || root.getData() > maxValue){
+            return false;
+        }
+        return (isBST(root.getLeft(), minValue, root.getData()-1) && isBST(root.getRight(), root.getData()+1, maxValue));
+    }
+
+    public int largestBST(Node root){
+        if(isBST()){
+            return sizeOfTree(root);
+        }
+        return Math.max(largestBST(root.getLeft()), largestBST(root.getRight()));
+    }
+
+    public static void main(String[] args) {
+        LargestBST tree = new LargestBST();
+        tree.insertNode(6);
+        tree.insertNode(3);
+        tree.insertNode(8);
+        tree.insertNode(1);
+        tree.insertNode(5);
+        tree.insertNode(7);
+        tree.insertNode(11);
+        tree.insertNode(9);
+        tree.insertNode(13);
+        System.out.println("in order travseal using Threaded binary tree");
+        System.out.println(tree.sizeOfTree(tree.root));
+        System.out.println(tree.isBST());
+        System.out.println(tree.largestBST(tree.root));
+    }
+}
