@@ -1,0 +1,144 @@
+/**
+ * The Node class creates node of the tree
+ *
+ * @author  Ravi Kumar Singh
+ * @version 1.0
+ * @since   2015-04-06
+ */
+
+class Node{
+
+    int data;
+    Node left;
+    Node right;
+
+    public int getData() {
+        return data;
+    }
+
+    public void setData(int data) {
+        this.data = data;
+    }
+
+    public Node getLeft() {
+        return left;
+    }
+
+    public void setLeft(Node left) {
+        this.left = left;
+    }
+
+    public Node getRight() {
+        return right;
+    }
+
+    public void setRight(Node right) {
+        this.right = right;
+    }
+
+    public Node(int data, Node left, Node right) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
+}
+
+/**
+ * The BST class is to create the Binary search tree
+ *
+ * @author  Ravi Kumar Singh
+ * @version 1.0
+ * @since   2015-04-06
+ */
+
+public class ThreadedBinaryTree {
+    Node root;
+
+    /**
+     * insertNode to insert the Node to tree
+     * @param key
+     * @return void
+     */
+    public void insertNode(int key) {
+        root = insertNode(root, new Node(key, null, null));
+    }
+
+    /**
+     * insertNode to insert the Node to tree
+     * @param currentParent, newNode
+     * @return Node
+     */
+    public Node insertNode(Node currentParent, Node newNode) {
+
+        if (currentParent == null) {
+            return newNode;
+        } else if (newNode.getData() > currentParent.getData()) {
+            currentParent.right = insertNode(currentParent.right, newNode);
+        } else if (newNode.getData() < currentParent.getData()) {
+            currentParent.left = insertNode(currentParent.left, newNode);
+        }
+        return currentParent;
+    }
+
+    /**
+     * inOrderTraversal to for inOrderTraversal for Tree
+     * @param root
+     * @return void
+     */
+    public void inOrderTraversal(Node root){
+        if( root == null){
+            return;
+        }
+        inOrderTraversal(root.getLeft());
+        System.out.println(root.getData());
+        inOrderTraversal(root.getRight());
+    }
+
+    public void threadedBinaryTree(Node root){
+
+        Node current = root;
+        Node prev = null;
+        if (root == null) {
+            return;
+        }
+
+        while( current!= null){
+            if( current.getLeft()==null){
+                System.out.println(current.getData());
+                current = current.getRight();
+            }
+            else {
+                prev = current.getLeft();
+                while( prev.getRight()!=null && prev.getRight() !=current){
+                    prev = prev.getRight();
+                }
+
+                if( prev.getRight()==null){
+                    prev.setRight(current);
+                    current = current.getLeft();
+                }
+                else {
+                    prev.setRight(null);
+                    System.out.println(current.getData());
+                    current = current.getRight();
+                }
+            }
+        }
+
+    }
+
+    public static void main(String[] args) {
+        ThreadedBinaryTree tree = new ThreadedBinaryTree();
+        tree.insertNode(6);
+        tree.insertNode(3);
+        tree.insertNode(8);
+        tree.insertNode(1);
+        tree.insertNode(5);
+        tree.insertNode(7);
+        tree.insertNode(11);
+        tree.insertNode(9);
+        tree.insertNode(13);
+        System.out.println("in order travseal using Threaded binary tree");
+        tree.threadedBinaryTree(tree.root);
+    }
+}
