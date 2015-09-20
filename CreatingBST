@@ -1,0 +1,259 @@
+/**
+ * The Node class creates node of the tree
+ *
+ * @author  Ravi Kumar Singh
+ * @version 1.0
+ * @since   2015-04-06
+ */
+
+class Node{
+
+    int data;
+    Node left;
+    Node right;
+
+    public int getData() {
+        return data;
+    }
+
+    public void setData(int data) {
+        this.data = data;
+    }
+
+    public Node getLeft() {
+        return left;
+    }
+
+    public void setLeft(Node left) {
+        this.left = left;
+    }
+
+    public Node getRight() {
+        return right;
+    }
+
+    public void setRight(Node right) {
+        this.right = right;
+    }
+
+    public Node(int data, Node left, Node right) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
+}
+
+/**
+ * The BST class is to create the Binary search tree
+ *
+ * @author  Ravi Kumar Singh
+ * @version 1.0
+ * @since   2015-04-06
+ */
+
+public class BST {
+    Node root;
+
+    /**
+     * insertNode to insert the Node to tree
+     * @param key
+     * @return void
+     */
+    public void insertNode(int key) {
+        root = insertNode(root, new Node(key, null, null));
+    }
+
+    /**
+     * insertNode to insert the Node to tree
+     * @param currentParent, newNode
+     * @return Node
+     */
+    public Node insertNode(Node currentParent, Node newNode) {
+
+        if (currentParent == null) {
+            return newNode;
+        } else if (newNode.getData() > currentParent.getData()) {
+            currentParent.right = insertNode(currentParent.right, newNode);
+        } else if (newNode.getData() < currentParent.getData()) {
+            currentParent.left = insertNode(currentParent.left, newNode);
+        }
+        return currentParent;
+    }
+
+    /**
+     * inOrderTraversal to for inOrderTraversal for Tree
+     * @param root
+     * @return void
+     */
+    public void inOrderTraversal(Node root){
+        if( root == null){
+            return;
+        }
+        inOrderTraversal(root.getLeft());
+        System.out.println(root.getData());
+        inOrderTraversal(root.getRight());
+    }
+
+    /**
+     * preOrderTraversal to for preOrderTraversal for Tree
+     * @param root
+     * @return void
+     */
+    public void preOrderTraversal(Node root){
+        if( root == null){
+            return;
+        }
+        System.out.println(root.getData());
+        preOrderTraversal(root.getLeft());
+        preOrderTraversal(root.getRight());
+    }
+
+    /**
+     * postOrderTraversal to for postOrderTraversal for Tree
+     * @param root
+     * @return void
+     */
+    public void postOrderTraversal(Node root){
+        if (root == null){
+            return;
+        }
+        postOrderTraversal(root.getLeft());
+        postOrderTraversal(root.getRight());
+        System.out.println(root.getData());
+    }
+
+    /**
+     * searching function is for searching a key in BST
+     * @param key
+     * @return void
+     */
+    public void searching(int key){
+        if(searchingNode(root, key)){
+            System.out.println(key + " is present");
+        } else {
+            System.out.println(key + " is not present");
+        }
+    }
+
+    /**
+     * searchingNode function is for searching a key in BST
+     * @param key
+     * @return void
+     */
+    private boolean searchingNode(Node root, int key) {
+        if( root == null){
+            return false;
+        }
+        if( root.getData() == key){
+            return true;
+        }
+        if( root.getData() > key){
+            return searchingNode(root.getLeft(), key);
+        }else if(root.getData() < key){
+            return searchingNode(root.getRight(), key);
+        }
+        return false;
+    }
+
+    public void delete(int key){
+        root = deleteNode(root, new Node(key, null, null));
+
+    }
+
+    private Node deleteNode(Node root, Node node) {
+        if( root ==null) {
+            return null;
+        }
+
+        if( root.getData() > node.getData()){
+            root.setLeft(deleteNode(root.getLeft(), node));
+        } else if( root.getData() < node.getData() ){
+            root.setRight(deleteNode(root.getRight(), node));
+        }
+        else {
+            // no child
+            if( root.getLeft()==null && root.getRight()==null){
+                return null;
+            }
+            // no left child but one right child
+            if( root.getLeft()==null && root.getRight()!=null ){
+                root.setData(root.getRight().getData());
+                root.setRight(null);
+                return root;
+            } // no right child but one left child
+            else if( root.getRight()==null && root.getLeft()!=null ){
+                root.setData(root.getLeft().getData());
+                root.setLeft(null);
+                return root;
+            } // two childs
+            else {
+                Node min = findMinTheRightChild(root.getRight());
+                int minimum = min.getData();
+                deleteNode(root, min);
+                root.setData(minimum);
+            }
+        }
+        return root;
+    }
+
+    private Node findMinTheRightChild(Node root) {
+        if( root.getRight()==null && root.getLeft() ==null){
+            return root;
+        }
+        return findMinTheRightChild(root.getLeft());
+    }
+    public  Node findMaxTheLeftChild(Node root){
+        if( root.getRight()==null && root.getLeft() ==null){
+            return root;
+        }
+        return findMaxTheLeftChild(root.getRight());
+    }
+
+    public void inorderSucandPred(int num){
+        inorderSucandPred(root, num);
+    }
+
+    private void inorderSucandPred(Node root, int num) {
+        if( root == null){
+            return ;
+        }
+
+        if( root.getData() > num){
+           inorderSucandPred(root.getLeft(), num);
+        } else if( root.getData() < num){
+           inorderSucandPred(root.getRight(), num);
+        }
+        else {
+            Node succ = findMinTheRightChild(root.getRight());
+            System.out.println("succ "+ succ.getData());
+            Node pre = findMaxTheLeftChild(root.getLeft());
+            System.out.println("predc " + pre.getData());
+
+        }
+    }
+
+    public static void main(String[] args) {
+        BST tree = new BST();
+        tree.insertNode(50);
+        tree.insertNode(30);
+        tree.insertNode(20);
+        tree.insertNode(40);
+        tree.insertNode(70);
+        tree.insertNode(60);
+        tree.insertNode(80);
+        System.out.println("in order travseal");
+        tree.inOrderTraversal(tree.root);
+        System.out.println("pre order transal");
+        tree.preOrderTraversal(tree.root);
+        System.out.println("post order traversal");
+        tree.postOrderTraversal(tree.root);
+        tree.searching(800);
+        tree.searching(80);
+        tree.delete(20);
+        tree.delete(30);
+        tree.delete(50);
+        System.out.println("after delettion");
+        tree.inOrderTraversal(tree.root);
+        tree.inorderSucandPred(50);
+    }
+}
