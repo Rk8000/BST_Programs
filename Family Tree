@@ -1,0 +1,148 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+
+/**
+ * Created by ravikumarsingh on 9/27/15.
+ */
+
+class Node1{
+    String name;
+    ArrayList<Node1> children;
+
+    public ArrayList<Node1> getChildren() {
+        return children;
+    }
+
+    public void setChildren(ArrayList<Node1> children) {
+        this.children = children;
+    }
+
+    public Node1(String name) {
+        this.name = name;
+    }
+}
+
+public class FamilyTree {
+
+    public static void main(String[] args) {
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        String str = null;
+	    /* Read the input string */
+        try{
+            str = bufferRead.readLine();
+        }catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+        // replace all the puncuation with " "  and spliting the string " "
+        String[] string= str.replaceAll("\\->", " ").replaceAll("\\,", " ").split(" ");
+        // constructing the B-Tree
+        Node1 root = constructTheFamilyTree(string);
+        // Finding the elements at level 4
+        levelOrderTraversal(root, 4);
+    }
+
+    public static void levelOrderTraversal(Node1 root, int level){
+        //base condition
+        if( root == null){
+            return;
+        }
+        // root has a level as 1
+        int height = 1;
+        Queue<Node1> queue = new LinkedList<Node1>();
+        // adding the root into the queue
+        queue.add(root);
+
+        while (true){
+            // number of nodes in the level
+            int numberOfNode = queue.size();
+            // printing all the nodes present on the given level
+            if( height == level){
+                for( Node1 node : queue){
+                    System.out.print(node.name +" ");
+                }
+            }
+            // reaching to end
+            if( numberOfNode==0 ){
+                break;
+            }
+            // Dequeue all the nodes of current level and enqueue all the nodes of next level
+            while (numberOfNode > 0){
+                Node1 nodeToRemove = queue.peek();
+                queue.poll();
+                if( nodeToRemove.getChildren() != null){
+                    ArrayList<Node1> child = nodeToRemove.getChildren();
+                    for( Node1 chi : child) {
+                        queue.add(chi);
+                    }
+                }
+                numberOfNode--;
+            }
+            // incrementing the height
+            height++;
+        }
+
+    }
+    private static Node1 constructTheFamilyTree(String[] words) {
+        // Creating the object
+        FamilyTree familyTree = new FamilyTree();
+        // creating the root and its first children
+        Node1 root = new Node1(words[0]);
+        ArrayList<Node1> child = new ArrayList<Node1>();
+        child.add(new Node1(words[1]));
+        root.setChildren(child);
+        // iterating over the all generations
+        for( int i =2 ; i < words.length ;i=i+2) {
+            ArrayList<Node1> child1 = new ArrayList<Node1>();
+            familyTree.insertNodes(i, words, root, child1);
+        }
+        return root;
+    }
+
+    private void insertNodes(int a, String[] words, Node1 root, ArrayList<Node1> child) {
+        // Checking if the family member has already added
+        Node1 gotNode = traversal1(root, words[a]);
+        // if yes, then making that family member as root
+        if (gotNode != null) {
+            root = gotNode;
+        }
+        // If the root doesn't haven't any children
+        if( root.getChildren()==null) {
+            child.add(new Node1(words[a+1]));
+            root.setChildren(child);
+        }
+        // The root already has children
+        else {
+            ArrayList<Node1> alreadyChildren = root.getChildren();
+            alreadyChildren.add(new Node1(words[a+1]));
+            root.setChildren(alreadyChildren);
+        }
+    }
+    
+    // Function to find if the element is already present in the family tree
+    private Node1 traversal1(Node1 root, String word) {
+        Node1 temp = null;
+        // base conditions
+        if( root.getChildren()==null){
+            return root ;
+        }
+        if( root.name.equalsIgnoreCase(word)){
+            return root;
+        }
+        ArrayList<Node1> children = root.getChildren();
+        if(children!=null) {
+            for (Node1 child : children) {
+                temp = traversal1(child, word);
+                if( temp.name.equalsIgnoreCase(word)){
+                    break;
+                }
+            }
+        }
+        // returning the root
+        return temp;
+    }
+}
